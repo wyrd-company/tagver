@@ -131,37 +131,9 @@ jobs:
           path: |
             *.${{ matrix.archive_ext }}
 
-  source:
-    name: Package source archive
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Package source archive
-        run: |
-          PREFIX="tagver/"
-          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
-            TAG="${GITHUB_REF##*/}"
-            VERSION="${TAG#v}"
-            PREFIX="tagver-${VERSION}/"
-          fi
-
-          git archive --format=tar.gz --prefix="$PREFIX" "$GITHUB_SHA" > tagver-source.tar.gz
-
-      - name: Upload source artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: tagver-source
-          path: tagver-source.tar.gz
-
   release:
     name: Create GitHub Release
-    needs:
-      - build
-      - source
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
@@ -302,27 +274,49 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
           REPOSITORY: ${{ github.repository }}
         run: |
-          SOURCE_ARCHIVE="artifacts/tagver-source/tagver-source.tar.gz"
-          SOURCE_SHA256="$(sha256sum "$SOURCE_ARCHIVE" | cut -d' ' -f1)"
+          LINUX_X86_64_ARCHIVE="artifacts/tagver-linux-x86_64/tagver-linux-x86_64.tar.gz"
+          LINUX_ARM64_ARCHIVE="artifacts/tagver-linux-arm64/tagver-linux-arm64.tar.gz"
+          MACOS_ARM64_ARCHIVE="artifacts/tagver-macos-arm64/tagver-macos-arm64.tar.gz"
+
+          LINUX_X86_64_SHA256="$(sha256sum "$LINUX_X86_64_ARCHIVE" | cut -d' ' -f1)"
+          LINUX_ARM64_SHA256="$(sha256sum "$LINUX_ARM64_ARCHIVE" | cut -d' ' -f1)"
+          MACOS_ARM64_SHA256="$(sha256sum "$MACOS_ARM64_ARCHIVE" | cut -d' ' -f1)"
 
           cat > homebrew-tools/Formula/tagver.rb <<EOF
-          class Tagver < Formula
-            desc "Command-line tool for minimalistic versioning using Git tags"
-            homepage "https://github.com/${REPOSITORY}"
-            url "https://github.com/${REPOSITORY}/releases/download/${TAG}/tagver-source.tar.gz"
-            sha256 "${SOURCE_SHA256}"
-            license "Apache-2.0"
+class Tagver < Formula
+  desc "Command-line tool for minimalistic versioning using Git tags"
+  homepage "https://github.com/${REPOSITORY}"
+  license "Apache-2.0"
+  version "${VERSION}"
 
-            depends_on "rust" => :build
+  on_macos do
+    on_arm do
+      url "https://github.com/${REPOSITORY}/releases/download/${TAG}/tagver-macos-arm64.tar.gz"
+      sha256 "${MACOS_ARM64_SHA256}"
+    end
+  end
 
-            def install
-              system "cargo", "install", *std_cargo_args(path: "crates/cli"), "--locked"
-            end
+  on_linux do
+    on_arm do
+      url "https://github.com/${REPOSITORY}/releases/download/${TAG}/tagver-linux-arm64.tar.gz"
+      sha256 "${LINUX_ARM64_SHA256}"
+    end
 
-            test do
-              system "#{bin}/tagver", "--help"
-            end
-          end
+    on_intel do
+      url "https://github.com/${REPOSITORY}/releases/download/${TAG}/tagver-linux-x86_64.tar.gz"
+      sha256 "${LINUX_X86_64_SHA256}"
+    end
+  end
+
+  def install
+    bin.install "tagver"
+    prefix.install_metafiles
+  end
+
+  test do
+    assert_match "TagVer", shell_output("#{bin}/tagver --help")
+  end
+end
           EOF
 
       - name: Commit and push formula
