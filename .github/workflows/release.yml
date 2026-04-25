@@ -257,9 +257,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-           # Force update the major tag
-           git tag -fa $MAJOR -m "Update $MAJOR to $TAG"
-           git push origin $MAJOR --force
+          # Force update the major tag
+          git tag -fa $MAJOR -m "Update $MAJOR to $TAG"
+          git push origin $MAJOR --force
 
   publish-homebrew-tap:
     name: Publish Homebrew formula
@@ -276,8 +276,9 @@ jobs:
         id: version
         shell: bash
         run: |
-          VERSION="${GITHUB_REF##*/}"
-          VERSION="${VERSION#v}"
+          TAG="${GITHUB_REF##*/}"
+          VERSION="${TAG#v}"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Checkout tap repository
@@ -286,11 +287,11 @@ jobs:
           repository: wyrd-company/homebrew-tools
           path: homebrew-tools
           ssh-key: ${{ secrets.FORMULAE_PUBLISH_KEY }}
-          persist-credentials: false
 
       - name: Generate formula
         shell: bash
         env:
+          TAG: ${{ steps.version.outputs.tag }}
           VERSION: ${{ steps.version.outputs.version }}
           REPOSITORY: ${{ github.repository }}
         run: |
@@ -301,7 +302,7 @@ jobs:
           class Tagver < Formula
             desc "Command-line tool for minimalistic versioning using Git tags"
             homepage "https://github.com/${REPOSITORY}"
-            url "https://github.com/${REPOSITORY}/releases/download/${VERSION}/tagver-source.tar.gz"
+            url "https://github.com/${REPOSITORY}/releases/download/${TAG}/tagver-source.tar.gz"
             sha256 "${SOURCE_SHA256}"
             license "Apache-2.0"
 
