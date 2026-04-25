@@ -142,7 +142,14 @@ jobs:
 
       - name: Package source archive
         run: |
-          git archive --format=tar.gz --prefix=tagver/ "$GITHUB_SHA" > tagver-source.tar.gz
+          PREFIX="tagver/"
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            TAG="${GITHUB_REF##*/}"
+            VERSION="${TAG#v}"
+            PREFIX="tagver-${VERSION}/"
+          fi
+
+          git archive --format=tar.gz --prefix="$PREFIX" "$GITHUB_SHA" > tagver-source.tar.gz
 
       - name: Upload source artifact
         uses: actions/upload-artifact@v4
