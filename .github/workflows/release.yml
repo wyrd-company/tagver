@@ -131,9 +131,30 @@ jobs:
           path: |
             *.${{ matrix.archive_ext }}
 
+  source:
+    name: Package source archive
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Package source archive
+        run: |
+          git archive --format=tar.gz --prefix=tagver/ "$GITHUB_SHA" > tagver-source.tar.gz
+
+      - name: Upload source artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tagver-source
+          path: tagver-source.tar.gz
+
   release:
     name: Create GitHub Release
-    needs: build
+    needs:
+      - build
+      - source
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
@@ -236,6 +257,81 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Force update the major tag
-          git tag -fa $MAJOR -m "Update $MAJOR to $TAG"
-          git push origin $MAJOR --force
+           # Force update the major tag
+           git tag -fa $MAJOR -m "Update $MAJOR to $TAG"
+           git push origin $MAJOR --force
+
+  publish-homebrew-tap:
+    name: Publish Homebrew formula
+    needs: release
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Extract version from tag
+        id: version
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF##*/}"
+          VERSION="${VERSION#v}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout tap repository
+        uses: actions/checkout@v4
+        with:
+          repository: wyrd-company/homebrew-tools
+          path: homebrew-tools
+          ssh-key: ${{ secrets.FORMULAE_PUBLISH_KEY }}
+          persist-credentials: false
+
+      - name: Generate formula
+        shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          SOURCE_ARCHIVE="artifacts/tagver-source/tagver-source.tar.gz"
+          SOURCE_SHA256="$(sha256sum "$SOURCE_ARCHIVE" | cut -d' ' -f1)"
+
+          cat > homebrew-tools/Formula/tagver.rb <<EOF
+          class Tagver < Formula
+            desc "Command-line tool for minimalistic versioning using Git tags"
+            homepage "https://github.com/${REPOSITORY}"
+            url "https://github.com/${REPOSITORY}/releases/download/${VERSION}/tagver-source.tar.gz"
+            sha256 "${SOURCE_SHA256}"
+            license "Apache-2.0"
+
+            depends_on "rust" => :build
+
+            def install
+              system "cargo", "install", *std_cargo_args(path: "crates/cli"), "--locked"
+            end
+
+            test do
+              system "#{bin}/tagver", "--help"
+            end
+          end
+          EOF
+
+      - name: Commit and push formula
+        shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          cd homebrew-tools
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet -- Formula/tagver.rb; then
+            echo "Formula already up to date."
+            exit 0
+          fi
+
+          git add Formula/tagver.rb
+          git commit -m "tagver ${VERSION}"
+          git push origin HEAD

@@ -26,6 +26,11 @@ This project is heavily influenced by the excellent [MinVer CLI](https://github.
 cargo install tagver-cli
 ```
 
+```bash
+brew tap wyrd-company/tools
+brew install tagver
+```
+
 ## Usage
 
 ### Basic usage
