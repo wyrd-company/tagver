@@ -239,3 +239,108 @@ jobs:
           # Force update the major tag
           git tag -fa $MAJOR -m "Update $MAJOR to $TAG"
           git push origin $MAJOR --force
+
+  publish-homebrew-tap:
+    name: Publish Homebrew formula
+    needs: release
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Extract version from tag
+        id: version
+        shell: bash
+        run: |
+          TAG="${GITHUB_REF##*/}"
+          VERSION="${TAG#v}"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout tap repository
+        uses: actions/checkout@v4
+        with:
+          repository: wyrd-company/homebrew-tools
+          path: homebrew-tools
+          ssh-key: ${{ secrets.FORMULAE_PUBLISH_KEY }}
+
+      - name: Generate formula
+        shell: bash
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          LINUX_X86_64_ARCHIVE="artifacts/tagver-linux-x86_64/tagver-linux-x86_64.tar.gz"
+          LINUX_ARM64_ARCHIVE="artifacts/tagver-linux-arm64/tagver-linux-arm64.tar.gz"
+          MACOS_ARM64_ARCHIVE="artifacts/tagver-macos-arm64/tagver-macos-arm64.tar.gz"
+
+          for archive in "$LINUX_X86_64_ARCHIVE" "$LINUX_ARM64_ARCHIVE" "$MACOS_ARM64_ARCHIVE"; do
+            if [[ ! -f "$archive" ]]; then
+              echo "Missing expected release artifact: $archive" >&2
+              exit 1
+            fi
+          done
+
+          LINUX_X86_64_SHA256="$(sha256sum "$LINUX_X86_64_ARCHIVE" | cut -d' ' -f1)"
+          LINUX_ARM64_SHA256="$(sha256sum "$LINUX_ARM64_ARCHIVE" | cut -d' ' -f1)"
+          MACOS_ARM64_SHA256="$(sha256sum "$MACOS_ARM64_ARCHIVE" | cut -d' ' -f1)"
+
+          cat > homebrew-tools/Formula/tagver.rb <<EOF
+class Tagver < Formula
+  desc "Command-line tool for minimalistic versioning using Git tags"
+  homepage "https://github.com/${REPOSITORY}"
+  license "Apache-2.0"
+  version "${VERSION}"
+
+  on_macos do
+    on_arm do
+      url "https://github.com/${REPOSITORY}/releases/download/${TAG}/tagver-macos-arm64.tar.gz"
+      sha256 "${MACOS_ARM64_SHA256}"
+    end
+  end
+
+  on_linux do
+    on_arm do
+      url "https://github.com/${REPOSITORY}/releases/download/${TAG}/tagver-linux-arm64.tar.gz"
+      sha256 "${LINUX_ARM64_SHA256}"
+    end
+
+    on_intel do
+      url "https://github.com/${REPOSITORY}/releases/download/${TAG}/tagver-linux-x86_64.tar.gz"
+      sha256 "${LINUX_X86_64_SHA256}"
+    end
+  end
+
+  def install
+    bin.install "tagver"
+    prefix.install_metafiles
+  end
+
+  test do
+    assert_match "TagVer", shell_output("#{bin}/tagver --help")
+  end
+end
+          EOF
+
+      - name: Commit and push formula
+        shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          cd homebrew-tools
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet -- Formula/tagver.rb; then
+            echo "Formula already up to date."
+            exit 0
+          fi
+
+          git add Formula/tagver.rb
+          git commit -m "tagver ${VERSION}"
+          git push origin HEAD
