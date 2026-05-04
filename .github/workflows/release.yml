@@ -225,20 +225,23 @@ jobs:
       
       - name: Update Major Tag
         run: |
-          # Get the version from the tag (e.g., 1.2.3)
           TAG=${GITHUB_REF##*/}
-          # Extract major version (e.g., 1)
           MAJOR=${TAG%%.*}
-          
+
+          # Don't float a major tag pre-1.0: every 0.x bump may be breaking,
+          # so consumers should pin to specific versions until 1.0.0.
+          if [[ "$MAJOR" == "0" ]]; then
+            echo "Skipping major tag update for pre-1.0 release ($TAG)."
+            exit 0
+          fi
+
           echo "Updating $MAJOR to point to $TAG"
-          
-          # Configure git
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Force update the major tag
-          git tag -fa $MAJOR -m "Update $MAJOR to $TAG"
-          git push origin $MAJOR --force
+
+          git tag -fa "$MAJOR" -m "Update $MAJOR to $TAG"
+          git push origin "$MAJOR" --force
 
   publish-homebrew-tap:
     name: Publish Homebrew formula
