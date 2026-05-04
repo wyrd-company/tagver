@@ -290,40 +290,40 @@ jobs:
           MACOS_ARM64_SHA256="$(sha256sum "$MACOS_ARM64_ARCHIVE" | cut -d' ' -f1)"
 
           cat > homebrew-tools/Formula/tagver.rb <<EOF
-class Tagver < Formula
-  desc "Command-line tool for minimalistic versioning using Git tags"
-  homepage "https://github.com/${REPOSITORY}"
-  license "Apache-2.0"
-  version "${VERSION}"
+            class Tagver < Formula
+              desc "Command-line tool for minimalistic versioning using Git tags"
+              homepage "https://github.com/${REPOSITORY}"
+              license "Apache-2.0"
+              version "${VERSION}"
 
-  on_macos do
-    on_arm do
-      url "https://github.com/${REPOSITORY}/releases/download/${TAG}/tagver-macos-arm64.tar.gz"
-      sha256 "${MACOS_ARM64_SHA256}"
-    end
-  end
+              on_macos do
+                on_arm do
+                  url "https://github.com/${REPOSITORY}/releases/download/${TAG}/tagver-macos-arm64.tar.gz"
+                  sha256 "${MACOS_ARM64_SHA256}"
+                end
+              end
 
-  on_linux do
-    on_arm do
-      url "https://github.com/${REPOSITORY}/releases/download/${TAG}/tagver-linux-arm64.tar.gz"
-      sha256 "${LINUX_ARM64_SHA256}"
-    end
+              on_linux do
+                on_arm do
+                  url "https://github.com/${REPOSITORY}/releases/download/${TAG}/tagver-linux-arm64.tar.gz"
+                  sha256 "${LINUX_ARM64_SHA256}"
+                end
 
-    on_intel do
-      url "https://github.com/${REPOSITORY}/releases/download/${TAG}/tagver-linux-x86_64.tar.gz"
-      sha256 "${LINUX_X86_64_SHA256}"
-    end
-  end
+                on_intel do
+                  url "https://github.com/${REPOSITORY}/releases/download/${TAG}/tagver-linux-x86_64.tar.gz"
+                  sha256 "${LINUX_X86_64_SHA256}"
+                end
+              end
 
-  def install
-    bin.install "tagver"
-    prefix.install_metafiles
-  end
+              def install
+                bin.install "tagver"
+                prefix.install_metafiles
+              end
 
-  test do
-    assert_match "TagVer", shell_output("#{bin}/tagver --help")
-  end
-end
+              test do
+                assert_match "TagVer", shell_output("#{bin}/tagver --help")
+              end
+            end
           EOF
 
       - name: Commit and push formula
