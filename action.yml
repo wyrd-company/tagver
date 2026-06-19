@@ -1,6 +1,6 @@
 name: 'TagVer'
 description: 'Tag / commit height based versioning for Git repositories'
-author: 'scratchingmonkey'
+author: 'wyrd-company'
 branding:
   icon: 'git-commit'
   color: 'orange'
@@ -108,9 +108,9 @@ runs:
         # Determine Version
         if [ "$REQUESTED_VERSION" = "latest" ]; then
           # Fetch latest release tag from GitHub API
-          DOWNLOAD_URL="https://github.com/scratchingmonkey/tagver/releases/latest/download/$ASSET_NAME"
+          DOWNLOAD_URL="https://github.com/wyrd-company/tagver/releases/latest/download/$ASSET_NAME"
         else
-          DOWNLOAD_URL="https://github.com/scratchingmonkey/tagver/releases/download/$REQUESTED_VERSION/$ASSET_NAME"
+          DOWNLOAD_URL="https://github.com/wyrd-company/tagver/releases/download/$REQUESTED_VERSION/$ASSET_NAME"
         fi
 
         echo "Downloading $DOWNLOAD_URL..."
