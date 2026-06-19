@@ -1,30 +1,28 @@
 {
-	"name": "TagVer",
-	"image": "mcr.microsoft.com/devcontainers/rust:2-1-trixie",
+  "name": "TagVer",
 
-	"mounts": [
-		{
-			"source": "devcontainer-cargo-cache-${devcontainerId}",
-			"target": "/usr/local/cargo",
-			"type": "volume"
-		}
-	],
+  "image": "mcr.microsoft.com/devcontainers/base:noble",
 
-	"features": {
-        "ghcr.io/devcontainers/features/common-utils": {
-            "installZsh": false,
-            "installOhMyZsh": false
-        },
-        "ghcr.io/devcontainers/features/git": {}
-    },
+  "features": {
+    "ghcr.io/devcontainers/features/rust:1": {}
+  },
 
-	"customizations": {
-        "vscode": {
-            "extensions": [
-                "rust-lang.rust-analyzer",
-                "fill-labs.dependi",
-                "github.vscode-github-actions"
-            ]
-        }
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // Rust
+        "rust-lang.rust-analyzer",
+        "vadimcn.vscode-lldb"
+      ]
     }
+  },
+
+  "containerEnv": {
+    "DEVCONTAINER_ID": "${devcontainerId}",
+    "WORKSPACE_HOME": "${containerWorkspaceFolder}"
+  },
+
+  "remoteEnv": {
+    "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+  }
 }
