@@ -51,7 +51,9 @@ jobs:
         run: cargo test --workspace
 
       - name: Test generated Homebrew formula against released and built CLIs
-        run: python3 scripts/test-homebrew-formula.py --binary target/debug/tagver
+        run: |
+          python3 -m unittest discover -s scripts -p 'test_homebrew_formula.py'
+          python3 scripts/test-homebrew-formula.py --binary target/debug/tagver
 
   test-action:
     runs-on: ubuntu-latest

@@ -29,6 +29,36 @@ def download(url):
         return response.read()
 
 
+def current_release(repository=ROOT):
+    # CI's fetch-depth: 0 checkout supplies tags; floating, prefixed and
+    # prerelease tags do not match the release workflow's bare N.N.N tags.
+    tags = subprocess.check_output(
+        ["git", "tag", "--list", "--sort=-version:refname"],
+        cwd=repository,
+        text=True,
+    ).splitlines()
+    for tag in tags:
+        if re.fullmatch(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)", tag):
+            return tag
+    raise AssertionError("No bare SemVer release tag found; use a fetch-depth: 0 checkout")
+
+
+def verify_archive(name, content, checksums):
+    # Release manifests may include a stale self-entry. Only the required
+    # archive's entry is authoritative for this check; require it exactly once.
+    entries = []
+    for line in checksums.splitlines():
+        match = re.fullmatch(r"([0-9a-fA-F]{64}) [ *](.+)", line)
+        if match and Path(match[2]).name == name:
+            entries.append(match[1].lower())
+    if len(entries) != 1:
+        raise AssertionError(f"Expected one published checksum for {name}")
+    digest = hashlib.sha256(content).hexdigest()
+    if digest != entries[0]:
+        raise AssertionError(f"Published checksum mismatch for {name}")
+    return digest
+
+
 def generator_script(workflow):
     """Read the real literal run block, without a separate generator fixture."""
     match = re.search(
@@ -60,24 +90,21 @@ def main():
     parser.add_argument("--binary", type=Path, required=True, help="Built Tagver CLI")
     args = parser.parse_args()
     built_binary = args.binary.resolve(strict=True)
-    release = json.loads(download(f"https://api.github.com/repos/{REPOSITORY}/releases/latest"))
-    tag = release["tag_name"]
+    tag = current_release()
+    release_url = f"https://github.com/{REPOSITORY}/releases/download/{tag}"
+    checksums = download(f"{release_url}/SHA256SUMS").decode("utf-8")
     print(f"Testing generated formula against published release {tag}", flush=True)
-    assets = {asset["name"]: asset for asset in release["assets"]}
 
     with tempfile.TemporaryDirectory(prefix="tagver-formula-test-") as temporary:
         work = Path(temporary)
         for platform in ("linux-x86_64", "linux-arm64", "macos-arm64"):
             name = f"tagver-{platform}.tar.gz"
-            asset = assets[name]
-            content = download(asset["browser_download_url"])
-            digest = "sha256:" + hashlib.sha256(content).hexdigest()
-            if digest != asset["digest"]:
-                raise AssertionError(f"Published digest mismatch for {name}")
+            content = download(f"{release_url}/{name}")
+            digest = verify_archive(name, content, checksums)
             archive = work / "artifacts" / f"tagver-{platform}" / name
             archive.parent.mkdir(parents=True)
             archive.write_bytes(content)
-            print(f"Verified {tag}/{name} {digest}", flush=True)
+            print(f"Verified {tag}/{name} sha256:{digest}", flush=True)
             if platform == "linux-x86_64":
                 with tarfile.open(archive) as package:
                     binary = package.extractfile("tagver-linux-x86_64/tagver")

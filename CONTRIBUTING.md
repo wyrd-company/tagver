@@ -33,16 +33,21 @@ cargo test --test integration
 After `cargo build --workspace`, run:
 
 ```bash
+python3 -m unittest discover -s scripts -p 'test_homebrew_formula.py'
 python3 scripts/test-homebrew-formula.py --binary target/debug/tagver
 ```
 
-This Linux x86_64 check downloads the current public release archives, verifies
-GitHub's published SHA256 digests, and executes the `Generate formula` step from
+This Linux x86_64 check selects the highest bare SemVer tag using Git's version
+sort from the repository checkout. CI uses `fetch-depth: 0` so the tags are
+available; local checkouts also need the release tags. It downloads that release's
+archives and `SHA256SUMS` directly from `github.com` without API calls and verifies
+each required archive entry. The manifest's self-entry is not verified. It executes
+the `Generate formula` step from
 `.github/workflows/release.yml` in a temporary directory. It checks the assertion
 from the generated formula against both the released executable and the built
 CLI. Python's standard library and the existing CI tools are sufficient; no tap
 checkout, Homebrew installation or publishing credentials are used. Public release
-metadata and downloads must be reachable. CI runs this check after the build.
+downloads must be reachable. CI runs these checks after the build.
 
 ### Example repositories
 
