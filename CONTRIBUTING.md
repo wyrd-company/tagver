@@ -28,6 +28,22 @@ cargo test -p tagver
 cargo test --test integration
 ```
 
+### Homebrew formula regression
+
+After `cargo build --workspace`, run:
+
+```bash
+python3 scripts/test-homebrew-formula.py --binary target/debug/tagver
+```
+
+This Linux x86_64 check downloads the current public release archives, verifies
+GitHub's published SHA256 digests, and executes the `Generate formula` step from
+`.github/workflows/release.yml` in a temporary directory. It checks the assertion
+from the generated formula against both the released executable and the built
+CLI. Python's standard library and the existing CI tools are sufficient; no tap
+checkout, Homebrew installation or publishing credentials are used. Public release
+metadata and downloads must be reachable. CI runs this check after the build.
+
 ### Example repositories
 
 To test the implementation, you can create example Git repositories:
