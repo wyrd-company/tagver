@@ -63,7 +63,7 @@ sudo install tagver-linux-x86_64/tagver /usr/local/bin/tagver
 ## Build from source
 
 Building requires a Rust toolchain at or above the minimum supported Rust
-version (MSRV) of **1.75**.
+version (MSRV) of **1.88**.
 
 ```bash
 git clone https://github.com/wyrd-company/tagver.git

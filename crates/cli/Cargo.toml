@@ -8,7 +8,7 @@ description = "Command-line tool for minimalistic versioning using Git tags"
 repository = "https://github.com/wyrd-company/tagver"
 readme = "../../README.md"
 keywords = ["versioning", "semver", "git", "cli", "build-tools"]
-rust-version = "1.75"
+rust-version = "1.88"
 categories = ["command-line-utilities", "development-tools"]
 
 [[bin]]

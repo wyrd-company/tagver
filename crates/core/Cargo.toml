@@ -8,7 +8,7 @@ description = "Core library for minimalistic versioning using Git tags"
 repository = "https://github.com/wyrd-company/tagver"
 readme = "../../README.md"
 documentation = "https://docs.rs/tagver"
-rust-version = "1.75"
+rust-version = "1.88"
 keywords = ["versioning", "semver", "git", "build"]
 categories = ["development-tools", "development-tools::build-utils"]
 
@@ -18,7 +18,7 @@ no-default-features = false
 
 [dependencies]
 # Core Git functionality
-gix = "0.75"
+gix = "0.89"
 
 # Version parsing and manipulation  
 semver = "1.0"

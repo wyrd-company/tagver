@@ -108,7 +108,7 @@ fn test_non_git_directory() {
         .code(2)
         // Error message is emitted to stdout by tracing
         .stdout(predicate::str::contains(
-            "Could not find a git repository in '.' or in any of its parents",
+            "is not a valid Git working directory",
         ));
 }
 
