@@ -159,8 +159,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-    env:
-      CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -203,14 +204,22 @@ jobs:
       - name: Cargo publish dry-run (cli)
         run: cargo publish -p tagver-cli --locked --allow-dirty --dry-run
 
+      - name: Authenticate with crates.io
+        id: crates-io-auth
+        uses: rust-lang/crates-io-auth-action@v1
+
       - name: Publish library
         run: cargo publish -p tagver --locked --allow-dirty
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.crates-io-auth.outputs.token }}
 
       - name: Wait for crate index to update
         run: sleep 20
 
       - name: Publish cli
         run: cargo publish -p tagver-cli --locked --allow-dirty
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.crates-io-auth.outputs.token }}
 
   update-major-tag:
     name: Update Major Version Tag
