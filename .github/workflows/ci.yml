@@ -10,6 +10,19 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  minimum-rust:
+    name: Minimum supported Rust
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Rust 1.88
+        uses: dtolnay/rust-toolchain@1.88.0
+
+      - name: Check the locked workspace with Rust 1.88
+        run: cargo check --workspace --locked
+
   ci:
     runs-on: ubuntu-latest
     steps:

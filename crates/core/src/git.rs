@@ -21,9 +21,10 @@ impl Repository {
         let repo = gix::discover(&path)
             .map_err(|e| TagVerError::GitRepoNotFound(format!("{}: {}", path.display(), e)))?;
 
-        let is_shallow = repo
-            .is_shallow()
-            .map_err(|e| TagVerError::GitCommand(format!("failed to read shallow state: {e}")))?;
+        let is_shallow = repo.is_shallow().unwrap_or_else(|e| {
+            tracing::warn!("Could not read the shallow state of the repository: {e}");
+            false
+        });
 
         Ok(Self {
             inner: repo,
