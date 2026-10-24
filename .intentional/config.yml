@@ -1,0 +1,35 @@
+$schema: https://intentional.foo/schemas/config.yml
+contract: contract-1
+settings:
+  internal-dependency-bump: patch
+  pre-1-0-bump-mapping: compatibility
+discovery:
+  managed-paths:
+    - detector: cargo-package
+      path: crates/cli/Cargo.toml
+      release-unit: tagver
+    - detector: cargo-package
+      path: crates/core/Cargo.toml
+      release-unit: tagver
+release-units:
+  tagver:
+    path: .
+    projections:
+      - adapter: cargo
+        file: crates/core/Cargo.toml
+        mode: committed
+      - adapter: cargo
+        file: crates/cli/Cargo.toml
+        mode: committed
+      - adapter: toml
+        file: crates/cli/Cargo.toml
+        pointer: /dependencies/tagver/version
+        mode: committed
+      - adapter: toml
+        file: crates/cli/Cargo.toml
+        pointer: /build-dependencies/tagver/version
+        mode: committed
+    tags:
+      primary:
+        role: primary
+        template: '{version}'
