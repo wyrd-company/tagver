@@ -2613,7 +2613,7 @@ dependencies = [
 
 [[package]]
 name = "tagver"
-version = "0.1.0"
+version = "0.1.7"
 dependencies = [
  "anyhow",
  "criterion",
@@ -2633,7 +2633,7 @@ dependencies = [
 
 [[package]]
 name = "tagver-cli"
-version = "0.1.0"
+version = "0.1.7"
 dependencies = [
  "anyhow",
  "assert_cmd",
