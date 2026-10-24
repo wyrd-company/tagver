@@ -1,6 +1,6 @@
 [package]
 name = "tagver-cli"
-version = "0.1.0"
+version = "0.1.7"
 edition = "2021"
 authors = ["tagver Contributors"]
 license = "Apache-2.0"
@@ -17,7 +17,7 @@ path = "src/main.rs"
 
 [dependencies]
 # Core library
-tagver = { path = "../core", version = "0.1.0" }
+tagver = { path = "../core", version = "0.1.7" }
 
 # CLI framework
 clap = { version = "4.4", features = ["derive", "env"] }
@@ -40,7 +40,7 @@ serde_json = "1.0.145"
 serde = "1.0.228"
 
 [build-dependencies]
-tagver = { path = "../core", version = "0.1.0" }
+tagver = { path = "../core", version = "0.1.7" }
 shadow-rs = "1"
 
 
