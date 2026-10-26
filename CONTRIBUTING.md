@@ -71,9 +71,18 @@ minver --working-directory linear-test
 [Intentional](https://wyrd.foo/docs/intentional/) is the only mechanism for
 versions and releases. Do not edit the version in `crates/*/Cargo.toml`
 (including the `tagver` dependency ranges in `crates/cli/Cargo.toml`), edit
-`CHANGELOG.md`, or create release tags by hand. The configuration lives in `.intentional/config.yml`:
-one release unit, `tagver`, projected onto both crate manifests and tagged with
-bare SemVer (no `v` prefix, e.g. `1.2.3`).
+`CHANGELOG.md`, or create release tags by hand. The configuration lives in `.intentional/config.yml`.
+It has two release units:
+
+- `tagver` is the code. It is projected onto both crate manifests and onto
+  `version` in `docs/user/docs.yml`, and tagged with bare SemVer (no `v`
+  prefix, e.g. `1.2.3`).
+- `tagver-docs` is the public docs in `docs/user/`. It is projected onto
+  `docs-version` in `docs/user/docs.yml` and tagged `tagver-docs@1.2.3`.
+  It has its own changelog, `docs/user/CHANGELOG.md`, and no GitHub Release.
+
+A docs-only change adds a `tagver-docs` intent
+(`intentional add --release-unit tagver-docs:patch --message "..."`).
 
 1. **Intent.** Every pull request with a user-facing change adds an intent:
 
@@ -97,7 +106,19 @@ bare SemVer (no `v` prefix, e.g. `1.2.3`).
 Pushing the tag runs the `Release` workflow. It verifies that the package versions
 match the tag, builds and checksums binaries for all targets with `--locked` (so a
 stale `Cargo.lock` fails the release), creates the GitHub Release, publishes to
-crates.io, and updates the Homebrew tap.
+crates.io, and updates the Homebrew tap. When that run succeeds, the
+`Publish docs` workflow publishes `docs/user/` to wyrd.foo. Pushing a
+`tagver-docs@*` tag publishes the docs on their own, and the workflow can also
+be dispatched with a tag or commit. A plain push to `main` does not publish.
+
+## Public docs
+
+The public docs are `docs/user/docs.yml` and the pages under `docs/user/`.
+Everything under `docs/user/` is published to
+[wyrd.foo](https://wyrd.foo/tools/tagver/). Each page names its product with
+`product: tagver` in its front matter, and `docs.yml` lists every asset a page
+or product field uses. Other files in `docs/` are private. Do not edit
+`version` or `docs-version` in `docs.yml`: Intentional writes them.
 
 ## Code Style
 
