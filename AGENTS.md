@@ -21,10 +21,11 @@ It also includes a GitHub action defined in `action.yml` that downloads release 
 - Release: `.github/workflows/release.yml`:
   - Triggers only after a `N.N.N` tag is pushed.
   - Builds multiple platform artifacts using `cross` for non-native targets, packages them to `dist/<artifact>` and uploads; keep the `matrix.include` entries in `release.yml` consistent with binary paths used when packaging.
-  - Updates crate versions in `crates/*/Cargo.toml` using `tagver`, publishes to crates.io and updates a major `vX` tag after release.
+  - Verifies that the package versions in `crates/*/Cargo.toml` match the tag (builds and publishes use `--locked`, so a stale `Cargo.lock` fails), publishes to crates.io and updates a major `vX` tag after release. It never edits versions: Intentional owns them (see `CONTRIBUTING.md`).
 
 ## Conventions
 
+- Never edit crate versions, dependency ranges on `tagver`, `CHANGELOG.md` or release tags by hand. Intentional owns them: add an intent with `intentional add` for each user-facing change (see `CONTRIBUTING.md`).
 - Env var names use a `TAGVER_` prefix (e.g. `TAGVER_TAGPREFIX`, `TAGVER_IGNOREHEIGHT`) mirroring all of the CLI flags except `--format`.
 - Tests that operate on Git repositories create temporary repos with `git init` and require `fetch-depth: 0` when running in CI.
 
