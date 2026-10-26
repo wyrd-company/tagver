@@ -1,5 +1,5 @@
 ---
-docs: true
+product: tagver
 title: Installation
 order: 2
 install: true

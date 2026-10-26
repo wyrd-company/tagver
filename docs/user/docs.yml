@@ -1,0 +1,69 @@
+# yaml-language-server: $schema=https://wyrd.foo/schemas/docs/v1.json
+# ---
+# relationships:
+#   publishes-to: wyrd-foo
+# ---
+schemaVersion: 1
+assets:
+  - assets/demo.gif
+products:
+  tagver:
+    name: tagver
+    version: 0.1.7
+    docs-version: 0.1.0
+    tagline: SemVer from your Git tags. Zero dependencies.
+    blurb: >-
+      A fast Rust CLI and library that calculates version numbers from Git tags
+      and commit height. MinVer-inspired, built on gitoxide, a single static
+      binary with JSON output and a GitHub Action.
+    status: stable
+    category: Release & Versioning
+    order: 4
+    # DRAFT highlights, pending Bob's approval.
+    highlights:
+      - >-
+        Reads your Git tags and commit height, and calculates a SemVer 2.0.0
+        version with no version file to edit.
+      - >-
+        Follows the first parent, so merge commits do not inflate the height.
+      - >-
+        Sets tag prefix, auto-increment, pre-release identifiers, minimum
+        major.minor and build metadata with flags or TAGVER_ environment
+        variables.
+      - Prints the version as text, or as JSON for CI scripts.
+      - >-
+        Ships as one binary with no runtime dependencies, from Homebrew, Cargo
+        or a GitHub release archive.
+      - >-
+        Runs as a GitHub Action that exposes the version and its parts as step
+        outputs.
+    media:
+      - src: assets/demo.gif
+        caption: tagver prints the version one commit after the 1.2.3 tag.
+        alt: >-
+          Terminal recording of tagver printing the version as text and as JSON
+          one commit after the 1.2.3 tag.
+    kinds:
+      - kind: cli
+        install:
+          - method: homebrew
+            os: [ macos, linux ]
+            default: true
+            command: brew install wyrd-company/tools/tagver
+          - method: cargo
+            os: [ macos, linux, windows ]
+            command: cargo install tagver-cli
+          - method: archive
+            os: [ linux ]
+            label: Linux x86_64
+            command: |
+              curl -LO https://github.com/wyrd-company/tagver/releases/latest/download/tagver-linux-x86_64.tar.gz
+              tar -xzf tagver-linux-x86_64.tar.gz
+              sudo install tagver-linux-x86_64/tagver /usr/local/bin/tagver
+          - method: archive
+            os: [ macos ]
+            label: macOS arm64
+            command: |
+              curl -LO https://github.com/wyrd-company/tagver/releases/latest/download/tagver-macos-arm64.tar.gz
+              tar -xzf tagver-macos-arm64.tar.gz
+              sudo install tagver-macos-arm64/tagver /usr/local/bin/tagver

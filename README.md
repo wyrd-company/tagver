@@ -33,7 +33,7 @@ brew install tagver
 
 ## Usage
 
-![TagVer command-line demo](docs/demo.gif)
+![TagVer command-line demo](docs/user/assets/demo.gif)
 
 ### Basic usage
 

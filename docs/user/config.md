@@ -1,5 +1,5 @@
 ---
-docs: true
+product: tagver
 title: Configuration
 order: 4
 ---

@@ -1,5 +1,5 @@
 ---
-docs: true
+product: tagver
 title: Usage
 order: 3
 ---
