@@ -19,7 +19,6 @@ products:
     status: stable
     category: Release & Versioning
     order: 4
-    # DRAFT highlights, pending Bob's approval.
     highlights:
       - >-
         Reads your Git tags and commit height, and calculates a SemVer 2.0.0
