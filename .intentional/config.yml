@@ -29,7 +29,27 @@ release-units:
         file: crates/cli/Cargo.toml
         pointer: /build-dependencies/tagver/version
         mode: committed
+      # The wyrd.foo product page shows the installed version.
+      - adapter: yaml
+        file: /docs/user/docs.yml
+        pointer: /products/tagver/version
+        mode: committed
     tags:
       primary:
         role: primary
         template: '{version}'
+  # The public docs release on their own, so the docs footer can say which
+  # docs describe which tagver version. Docs units are tag-only.
+  tagver-docs:
+    path: docs/user
+    depends-on:
+      - tagver
+    projections:
+      - adapter: yaml
+        file: /docs/user/docs.yml
+        pointer: /products/tagver/docs-version
+        mode: committed
+    tags:
+      primary:
+        role: primary
+        template: '{id}@{version}'

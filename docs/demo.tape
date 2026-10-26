@@ -1,4 +1,4 @@
-Output docs/demo.gif
+Output docs/user/assets/demo.gif
 
 Require bash
 Require git

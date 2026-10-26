@@ -18,8 +18,9 @@ It also includes a GitHub action defined in `action.yml` that downloads release 
 - CI: `.github/workflows/ci.yml`:
   - Runs on every PR and push to `main`.
   - Checks out code, sets up Rust, builds, formats, lints, and tests the entire workspace including the GitHub action.
+- Docs: `.github/workflows/publish-docs.yml` publishes `docs/user/` to wyrd.foo through the wyrd.foo reusable workflow (`@v2`). It runs after a successful `Release` run for a pushed tag, on a push of a `tagver-docs@*` tag, and by dispatch. A plain push to `main` does not publish. Public docs live only in `docs/user/` (`docs.yml` plus pages that name `product: tagver`); the rest of `docs/` is private. Intentional writes `version` and `docs-version` in `docs/user/docs.yml`.
 - Release: `.github/workflows/release.yml`:
-  - Triggers only after a `N.N.N` tag is pushed.
+  - Triggers only after a `N.N.N` tag is pushed. A `tagver-docs@*` tag does not match.
   - Builds multiple platform artifacts using `cross` for non-native targets, packages them to `dist/<artifact>` and uploads; keep the `matrix.include` entries in `release.yml` consistent with binary paths used when packaging.
   - Verifies that the package versions in `crates/*/Cargo.toml` match the tag (builds and publishes use `--locked`, so a stale `Cargo.lock` fails), publishes to crates.io and updates a major `vX` tag after release. It never edits versions: Intentional owns them (see `CONTRIBUTING.md`).
 

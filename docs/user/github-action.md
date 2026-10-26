@@ -1,5 +1,5 @@
 ---
-docs: true
+product: tagver
 title: GitHub Action
 order: 5
 ---
