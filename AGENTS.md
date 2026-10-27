@@ -81,6 +81,11 @@ All of the relevant files in the repo are listed here:
 │           ├── min_major_minor.rs # Tests for minimum major.minor handling
 │           ├── tag_prefixes.rs # Tests for tag prefix handling
 │           └── versions.rs # Tests for version calculation
+├── DESIGN.md # Brand design system: mark, favicons and social images
+├── docs
+│   └── user # Public docs published to wyrd.foo
+│       ├── assets # Logo, favicons, social images and demo
+│       └── docs.yml # wyrd.foo docs contract
 ├── .devcontainer
 │   └── devcontainer.json # Devcontainer configuration
 ├── .github
