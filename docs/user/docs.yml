@@ -6,6 +6,10 @@
 schemaVersion: 1
 assets:
   - assets/demo.gif
+  - assets/logo.svg
+  - assets/logo-dark.svg
+  - assets/favicon.svg
+  - assets/social-image.png
 products:
   tagver:
     name: tagver
@@ -19,6 +23,10 @@ products:
     status: stable
     category: Release & Versioning
     order: 4
+    logo: assets/logo.svg
+    logo-dark: assets/logo-dark.svg
+    favicon: assets/favicon.svg
+    social-image: assets/social-image.png
     highlights:
       - >-
         Reads your Git tags and commit height, and calculates a SemVer 2.0.0

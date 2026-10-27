@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/user/assets/logo-dark.svg">
+    <img src="docs/user/assets/logo.svg" alt="tagver icon" width="160">
+  </picture>
+</p>
+
 # TagVer
 
 [![CI](https://github.com/wyrd-company/tagver/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/wyrd-company/tagver/actions/workflows/ci.yml?query=branch%3Amain) [![Crates.io Version](https://img.shields.io/crates/v/tagver)](https://crates.io/crates/tagver-cli) [![docs.rs](https://img.shields.io/docsrs/tagver?logo=docsdotrs&link=https%3A%2F%2Fdocs.rs%2Ftagver%2Flatest%2Ftagver%2F)](https://crates.io/crates/tagver-cli)

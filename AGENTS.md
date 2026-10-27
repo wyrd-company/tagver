@@ -32,10 +32,13 @@ It also includes a GitHub action defined in `action.yml` that downloads release 
 
 ## Useful commands
 
+`taskfile.yml` wraps these: `task build`, `task test`, `task lint`, `task format` and `task check`.
+
 - Build: `cargo build --workspace --release`
 - Run CLI locally: `cargo run --bin tagver -- --format json`
 - Run tests: `cargo test --workspace` (or `cargo test --test cli` for integration tests)
 - Format & lint: `cargo fmt --all` and `cargo clippy --workspace --all-targets -- -D warnings`
+- Brand assets: `task brand` writes `docs/user/assets/` from the `DESIGN.md` tokens; `task design:lint` lints `DESIGN.md`. Both need Node and pnpm. Change `DESIGN.md`, not the generated assets.
 
 ## Navigation
 
@@ -81,6 +84,13 @@ All of the relevant files in the repo are listed here:
 │           ├── min_major_minor.rs # Tests for minimum major.minor handling
 │           ├── tag_prefixes.rs # Tests for tag prefix handling
 │           └── versions.rs # Tests for version calculation
+├── DESIGN.md # Brand design system: mark, favicons and social images
+├── docs
+│   └── user # Public docs published to wyrd.foo
+│       ├── assets # Logo, favicons, social images and demo
+│       └── docs.yml # wyrd.foo docs contract
+├── scripts
+│   └── brand # Brand asset generator (task brand), reads DESIGN.md
 ├── .devcontainer
 │   └── devcontainer.json # Devcontainer configuration
 ├── .github
@@ -88,7 +98,8 @@ All of the relevant files in the repo are listed here:
 │       ├── ci.yml # CI workflow
 │       └── release.yml # Release workflow
 ├── .gitignore
-└── README.md
+├── README.md
+└── taskfile.yml # Task verbs: build, test, lint, format, check, brand
 ```
 
 TRUST THESE INSTRUCTIONS AND ONLY SEARCH IF INFORMATION IS MISSING OR INCORRECT.
