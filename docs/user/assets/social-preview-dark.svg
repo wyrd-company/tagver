@@ -17,11 +17,9 @@
     <circle cx="848" cy="816" r="80" fill="#3DD68C"/>
   </g>
     </svg>
-    <g font-family="Geist Mono, Geist Mono Variable, DejaVu Sans Mono, monospace">
-      <text x="620" y="292" font-size="128" font-weight="600" letter-spacing="-5" fill="#E8ECF1">tagver</text>
-      <rect x="626" y="324" width="104" height="10" rx="5" fill="#3DD68C"/>
-    </g>
-    <text x="620" y="400" font-family="Geist, Geist Variable, DejaVu Sans, sans-serif" font-size="40" font-weight="500" fill="#A3ADBA">SemVer from your Git tags.</text>
-    <text x="620" y="462" font-family="Geist Mono, Geist Mono Variable, DejaVu Sans Mono, monospace" font-size="27" fill="#A3ADBA">1.0.0 +3 → <tspan fill="#3DD68C" font-weight="600">1.0.1-alpha.0.3</tspan></text>
+    <text x="620" y="292" font-family="Geist Mono, monospace" font-size="128" font-weight="600" letter-spacing="-5.12" fill="#E8ECF1">tagver</text>
+    <rect x="626" y="324" width="104" height="10" rx="5" fill="#3DD68C"/>
+    <text x="620" y="400" font-family="Geist, sans-serif" font-size="40" font-weight="500" fill="#A3ADBA">SemVer from your Git tags.</text>
+    <text x="620" y="462" font-family="Geist Mono, monospace" font-size="27" font-weight="400" fill="#A3ADBA">1.0.0 +3 → <tspan font-weight="600" fill="#3DD68C">1.0.1-alpha.0.3</tspan></text>
   </g>
 </svg>

@@ -49,12 +49,23 @@ spacing:
   grid: 1024px
   stroke: 64px
   stroke-tile: 96px
+  hole: 32px
+  hole-tile: 44px
   dot-root: 72px
   dot-commit: 52px
   dot-version: 80px
+  dot-root-tile: 80px
+  dot-version-tile: 112px
   social-mark: 520px
+  social-mark-x: 56px
+  social-mark-y: 55px
   social-text-x: 620px
+  social-wordmark-baseline: 292px
+  social-accent-bar-y: 324px
+  social-accent-bar-inset: 6px
   social-accent-bar: 104px
+  social-tagline-baseline: 400px
+  social-example-baseline: 462px
 components:
   mark:
     textColor: "{colors.ink}"
@@ -144,11 +155,13 @@ components:
 # tagver design system
 
 tagver is a CLI, so its design system is its brand: the mark, the favicons and
-the social images. The tokens above are the normative values. The assets in
-[`docs/user/assets/`](docs/user/assets/) are drawn from them, and
-[`docs/user/docs.yml`](docs/user/docs.yml) gives wyrd.foo the logo, favicon
-and social image. Pages that show tagver, such as the wyrd.foo product page,
-use their own design system around the mark.
+the social images. The tokens above are the normative values. `task brand`
+runs [`scripts/brand/generate.mjs`](scripts/brand/generate.mjs), which reads
+them and writes every asset in [`docs/user/assets/`](docs/user/assets/)
+except the demo. Change a token, then run `task brand`; do not edit the assets
+by hand. [`docs/user/docs.yml`](docs/user/docs.yml) gives wyrd.foo the logo,
+favicon and social image. Pages that show tagver, such as the wyrd.foo product
+page, use their own design system around the mark.
 
 ## Overview
 
@@ -199,7 +212,7 @@ larger.
 
 Geist Mono sets the wordmark and the example; Geist sets the tagline. The
 name `tagver` is always lower case and set in monospace, because it is the
-command a reader types. Fallbacks are `ui-monospace` and `system-ui`.
+command a reader types. Fallbacks are `monospace` and `sans-serif`.
 
 | Token | Where |
 | --- | --- |
@@ -215,24 +228,23 @@ height of 3, and tagver's default pre-release identifiers give
 ## Layout
 
 The mark is drawn on a `grid` of 1024 by 1024 units, the `viewBox` of every
-square asset. Its shapes, in grid units:
+square asset. The generator holds the path shape: a tag on a pole at the left,
+and a commit line along the bottom from the root to the version. Line widths,
+the tag hole and the dot radii are tokens: `hole`, `dot-root`, `dot-commit` and
+`dot-version` in the logo, and `hole-tile`, `dot-root-tile` and
+`dot-version-tile` on the tile. The mark is offset so its visual centre is the
+grid centre.
 
-- The tag pole is at x 176, from y 208 down to the commit line at y 816.
-- The tag body runs from x 176 to x 400, with its point at x 496, y 304. Its
-  hole is a dot of radius 32 at x 272, y 304.
-- The commit line runs from x 176 to x 848 at y 816.
-- The root dot (radius `dot-root`) is at x 176; two commit dots (radius
-  `dot-commit`) are at x 400 and x 624; the version dot (radius
-  `dot-version`) is at x 848.
-- The whole mark moves by (-4, -24) so its visual centre is the grid centre.
+Social images use the `social-image` artboard (1200 by 630). The
+`social-preview` canvas (1280 by 640, GitHub's size) centres the same
+artboard. Positions on the artboard are tokens:
 
-Social images use a 1200 by 630 artboard. The 1280 by 640 GitHub preview
-centres the same artboard.
-
-- The mark is `social-mark` (520px) square at x 56, y 55.
-- Text starts at `social-text-x` (620px). The wordmark baseline is at y 292,
-  the accent bar at y 324, the tagline baseline at y 400 and the example
-  baseline at y 462.
+- The mark is `social-mark` square at (`social-mark-x`, `social-mark-y`).
+- Text starts at `social-text-x`, on the baselines
+  `social-wordmark-baseline`, `social-tagline-baseline` and
+  `social-example-baseline`.
+- The accent bar is at `social-accent-bar-y`, inset by
+  `social-accent-bar-inset` so it lines up with the stem of the `t`.
 
 ## Elevation & Depth
 

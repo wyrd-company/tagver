@@ -1,0 +1,68 @@
+version: "3"
+
+tasks:
+  default:
+    desc: List available tasks
+    cmds:
+      - task --list
+    silent: true
+
+  build:
+    desc: Build the release binaries
+    cmds:
+      - cargo build --workspace --release
+
+  test:
+    desc: Run the full test suite
+    cmds:
+      - cargo test --workspace
+
+  lint:
+    desc: Check formatting, run clippy and lint DESIGN.md
+    cmds:
+      - cargo fmt --all -- --check
+      - cargo clippy --workspace --all-targets -- -D warnings
+      - task: design:lint
+
+  format:
+    desc: Apply formatting
+    cmds:
+      - cargo fmt --all
+
+  check:
+    desc: Run everything CI runs
+    cmds:
+      - task: lint
+      - task: test
+
+  brand:
+    desc: Generate the brand assets in docs/user/assets/ from DESIGN.md
+    deps: [brand:install]
+    sources:
+      - DESIGN.md
+      - scripts/brand/generate.mjs
+      - scripts/brand/pnpm-lock.yaml
+    generates:
+      - docs/user/assets/logo*.svg
+      - docs/user/assets/favicon*
+      - docs/user/assets/apple-touch-icon.png
+      - docs/user/assets/social-*
+    cmds:
+      - pnpm --dir scripts/brand exec playwright install chromium
+      - pnpm --dir scripts/brand generate
+
+  design:lint:
+    desc: Lint DESIGN.md against the DESIGN.md format
+    deps: [brand:install]
+    cmds:
+      - pnpm --dir scripts/brand exec design.md lint ../../DESIGN.md
+
+  brand:install:
+    internal: true
+    sources:
+      - scripts/brand/package.json
+      - scripts/brand/pnpm-lock.yaml
+    generates:
+      - scripts/brand/node_modules/.modules.yaml
+    cmds:
+      - pnpm --dir scripts/brand install --frozen-lockfile
