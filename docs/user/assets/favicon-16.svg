@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="16" height="16" role="img" aria-labelledby="title">
+  <title id="title">tagver</title>
+  <rect width="1024" height="1024" rx="160" fill="#15191F"/>
+  <g transform="translate(-24 -32)">
+    <g fill="none" stroke="#E8ECF1" stroke-width="96" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M256 768V256H480L576 368L480 480H256" fill="#E8ECF1"/>
+      <path d="M256 768H768"/>
+    </g>
+    <circle cx="256" cy="768" r="80" fill="#E8ECF1"/>
+    <circle cx="768" cy="768" r="112" fill="#3DD68C"/>
+  </g>
+</svg>

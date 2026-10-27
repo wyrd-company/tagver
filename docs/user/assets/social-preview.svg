@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
+  <title>tagver: SemVer from your Git tags</title>
+  <rect width="1280" height="640" fill="#F4F6F8"/>
+  <g transform="translate(40 5)">
+    <svg x="56" y="55" width="520" height="520" viewBox="0 0 1024 1024">
+  <g transform="translate(-4 -24)">
+    <g fill="none" stroke="#15191F" stroke-width="64" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M176 816V208H400L496 304L400 400H176"/>
+      <path d="M176 816H848"/>
+    </g>
+    <g fill="#15191F">
+      <circle cx="272" cy="304" r="32"/>
+      <circle cx="176" cy="816" r="72"/>
+      <circle cx="400" cy="816" r="52"/>
+      <circle cx="624" cy="816" r="52"/>
+    </g>
+    <circle cx="848" cy="816" r="80" fill="#1F9D63"/>
+  </g>
+    </svg>
+    <g font-family="Geist Mono, Geist Mono Variable, DejaVu Sans Mono, monospace">
+      <text x="620" y="292" font-size="128" font-weight="600" letter-spacing="-5" fill="#15191F">tagver</text>
+      <rect x="626" y="324" width="104" height="10" rx="5" fill="#1F9D63"/>
+    </g>
+    <text x="620" y="400" font-family="Geist, Geist Variable, DejaVu Sans, sans-serif" font-size="40" font-weight="500" fill="#3D4654">SemVer from your Git tags.</text>
+    <text x="620" y="462" font-family="Geist Mono, Geist Mono Variable, DejaVu Sans Mono, monospace" font-size="27" fill="#3D4654">1.0.0 +3 → <tspan fill="#1F9D63" font-weight="600">1.0.1-alpha.0.3</tspan></text>
+  </g>
+</svg>
