@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title">
+  <title id="title">tagver</title>
+  <g transform="translate(-4 -24)">
+    <g fill="none" stroke="#E8ECF1" stroke-width="64" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M176 816V208H400L496 304L400 400H176"/>
+      <path d="M176 816H848"/>
+    </g>
+    <g fill="#E8ECF1">
+      <circle cx="272" cy="304" r="32"/>
+      <circle cx="176" cy="816" r="72"/>
+      <circle cx="400" cy="816" r="52"/>
+      <circle cx="624" cy="816" r="52"/>
+    </g>
+    <circle cx="848" cy="816" r="80" fill="#3DD68C"/>
+  </g>
+</svg>
