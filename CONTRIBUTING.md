@@ -91,8 +91,9 @@ A docs-only change adds a `tagver-docs` intent
      --message "Describe the user-visible outcome."
    ```
 
-   Use `major`, `minor`, or `patch`; before 1.0 the configured compatibility
-   mapping applies. Commit the intent with the change.
+   The bump states the change: `major` is breaking, `minor` is a new
+   capability, `patch` is a fix. Before 1.0, `major` releases `0.(x+1).0`, and
+   `minor` and `patch` release `0.x.(y+1)`. Commit the intent with the change.
 2. **Status.** `intentional status` shows pending intents and the next version;
    `intentional check` validates configuration, intents, and tag history.
 3. **Plan.** `intentional plan > release-plan.json` saves the digest-bound plan.

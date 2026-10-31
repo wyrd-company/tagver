@@ -1,8 +1,7 @@
 $schema: https://intentional.foo/schemas/config.yml
-contract: contract-1
+contract: contract-2
 settings:
   internal-dependency-bump: patch
-  pre-1-0-bump-mapping: compatibility
 discovery:
   managed-paths:
     - detector: cargo-package
@@ -11,6 +10,11 @@ discovery:
     - detector: cargo-package
       path: crates/core/Cargo.toml
       release-unit: tagver
+  # The brand asset generator is a private build tool, not a release unit.
+  excluded-paths:
+    - detector: npm-package
+      path: scripts/brand/package.json
+      evidence-digest: sha256:585d49a324b951861e72e3bb72cf368ba450dfd869a03b9f5afe13ee6d44bcd9
 release-units:
   tagver:
     path: .
