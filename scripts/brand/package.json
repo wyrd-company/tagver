@@ -3,7 +3,7 @@
   "private": true,
   "description": "Generates the tagver brand assets from DESIGN.md.",
   "type": "module",
-  "packageManager": "pnpm@11.28.10",
+  "packageManager": "pnpm@12.16.1",
   "scripts": {
     "generate": "node generate.mjs"
   },
