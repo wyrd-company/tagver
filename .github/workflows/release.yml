@@ -148,16 +148,40 @@ jobs:
 
       - name: Generate checksums
         run: |
-          cd artifacts
-          find . -type f -exec sha256sum {} + > SHA256SUMS
+          # Release assets are uploaded by base name, so the manifest lists
+          # base names from one flat directory and never lists itself.
+          mkdir release
+          find artifacts -type f -exec mv --no-clobber -t release {} +
+          if [ -n "$(find artifacts -type f)" ]; then
+            echo "Duplicate release asset names:" >&2
+            find artifacts -type f >&2
+            exit 1
+          fi
+          cd release
+          sha256sum -- * > ../SHA256SUMS
+          mv ../SHA256SUMS SHA256SUMS
+          sha256sum --check --strict SHA256SUMS
+          cat SHA256SUMS
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v3
         with:
-          files: artifacts/**/*
+          files: release/*
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify published checksums
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          mkdir published
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --dir published
+          cd published
+          sha256sum --check --strict SHA256SUMS
+          diff <(printf '%s\n' * | grep -vx SHA256SUMS | sort) <(cut -d' ' -f3- SHA256SUMS | sort)
 
   publish:
     name: Publish to crates.io
